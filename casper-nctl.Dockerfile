@@ -1,6 +1,6 @@
 FROM ubuntu:focal
 
-ARG GITBRANCH=release-1.4.8
+ARG GITBRANCH=release-1.4.9
 
 # DEBIAN_FRONTEND required for tzdata dependency install
 RUN apt-get update \
@@ -10,14 +10,14 @@ RUN apt-get update \
               pkg-config libssl-dev make build-essential gettext-base lsof \
       && rm -rf /var/lib/apt/lists/*
 
-SHELL ["/bin/bash", "-c"] 
+SHELL ["/bin/bash", "-c"]
 
 # install cmake
 RUN curl -Ls https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz | sudo tar -C /usr/local --strip-components=1 -xz
 
 # install rust nigthly and rustup
 RUN curl -f -L https://static.rust-lang.org/rustup.sh -O \
-    && sh rustup.sh -y 
+    && sh rustup.sh -y
 ENV PATH="$PATH:/root/.cargo/bin"
 
 # set few environment variables needed for the nctl build scripts
@@ -31,7 +31,7 @@ RUN git clone https://github.com/casper-network/casper-node-launcher.git ~/caspe
 RUN git clone -b main https://github.com/casper-ecosystem/casper-client-rs ~/casper-client-rs \
     && cd ~/casper-client-rs && cargo build --release
 RUN git clone -b $GITBRANCH https://github.com/casper-network/casper-node.git ~/casper-node \
-    && source ~/casper-node/utils/nctl/sh/assets/compile.sh 
+    && source ~/casper-node/utils/nctl/sh/assets/compile.sh
 
 # run clean-build-artifacts.sh to remove intermediate files and keep the image lighter
 COPY ./clean-build-artifacts.sh .
@@ -70,6 +70,9 @@ ENV NCTL_CASPER_NODE_LAUNCHER_HOME="/home/casper/casper-node-launcher"
 ENV NCTL_CASPER_CLIENT_HOME="/home/casper/casper-client-rs"
 RUN echo "source casper-node/utils/nctl/activate" >> .bashrc
 RUN echo "alias casper-client=/home/casper/casper-client-rs/target/release/casper-client" >> .bashrc
+
+COPY --chown=casper:casper chainspec.toml ${NCTL_CASPER_HOME}/resources/local/chainspec.toml.in
+COPY --chown=casper:casper get_system_contracts_call.wasm .
 
 COPY --chown=casper:casper ./restart.sh .
 COPY --chown=casper:casper ./net-1-predefined-accounts.tar.gz .
