@@ -2,9 +2,7 @@ version: '3'
 
 services:
   mynctl:
-    image: makesoftware/casper-nctl:latest
-    volumes:
-      - ${PWD}/chainspec.toml:/home/casper/chainspec.toml
+    image: killianh/nctl:latest
     container_name: mynctl
     ports:
       - 11101-11105:11101-11105
@@ -13,7 +11,7 @@ services:
     environment:
       PREDEFINED_ACCOUNTS: 'true'
       #PATH_TO_CONFIG_TOML: '/home/casper/config.toml'
-      PATH_TO_CHAINSPEC: '/home/casper/chainspec.toml'
+      #PATH_TO_CHAINSPEC: '/home/casper/chainspec.toml'
       MINIMUM_ROUND_EXPONENT: '12'
       MAXIMUM_ROUND_EXPONENT: '14'
       DEPLOY_DELAY: '5sec'
