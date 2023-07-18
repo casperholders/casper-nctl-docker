@@ -1,6 +1,6 @@
 FROM ubuntu:focal
 
-ARG GITBRANCH=release-1.4.9
+ARG GITBRANCH=release-1.5.2
 
 # DEBIAN_FRONTEND required for tzdata dependency install
 RUN apt-get update \
